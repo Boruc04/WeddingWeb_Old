@@ -7,11 +7,11 @@ terraform {
     }
   }
 
-  backend "azurem" {
+  backend "azurerm" {
   }
 }
 
-provider "azurem" {
+provider "azurerm" {
   features {}
 }
 
@@ -32,7 +32,7 @@ resource "azurerm_app_service_plan" "test" {
 }
 
 resource "azurerm_app_service" "test" {
-  name                = "example-app-service"
+  name                = "wedding-web-test-app"
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
   app_service_plan_id = azurerm_app_service_plan.example.id
