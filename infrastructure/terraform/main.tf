@@ -22,8 +22,8 @@ resource "azurerm_resource_group" "test" {
 
 resource "azurerm_app_service_plan" "test" {
   name                = "wedding-web-test-asp"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.test.location
+  resource_group_name = azurerm_resource_group.test.name
 
   sku {
     tier = "Free"
@@ -33,9 +33,9 @@ resource "azurerm_app_service_plan" "test" {
 
 resource "azurerm_app_service" "test" {
   name                = "wedding-web-test-app"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
-  app_service_plan_id = azurerm_app_service_plan.example.id
+  location            = azurerm_resource_group.test.location
+  resource_group_name = azurerm_resource_group.test.name
+  app_service_plan_id = azurerm_app_service_plan.test.id
 
   app_settings = {
     "ASPNETCORE_ENVIRONMENT" = "Test"
