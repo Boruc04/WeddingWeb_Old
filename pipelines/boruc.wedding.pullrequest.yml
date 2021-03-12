@@ -73,6 +73,14 @@ stages:
           commandOptions: '-auto-approve'
           environmentServiceNameAzureRM: 'Subskrypcja programu Visual Studio Professional(a8f64608-16de-41a8-880a-c0b812cebad3)'
         displayName: terraform apply
+      - task: AzureRmWebAppDeployment@4
+        inputs:
+          ConnectionType: 'AzureRM'
+          azureSubscription: 'Subskrypcja programu Visual Studio Professional(a8f64608-16de-41a8-880a-c0b812cebad3)'
+          appType: 'webApp'
+          WebAppName: 'wedding-web-test-app'
+          packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+        displayName: deploy application
 
 - stage: DelayDestroy
   dependsOn: [CreateTestEnvironment]
