@@ -93,7 +93,7 @@ stages:
           azureSubscription: 'Subskrypcja programu Visual Studio Professional(a8f64608-16de-41a8-880a-c0b812cebad3)'
           appType: 'webApp'
           WebAppName: 'wedding-web-test-app'
-          packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+          packageForLinux: '$(Pipeline.Workspace)/**/WeddingWeb.zip'
         displayName: deploy application
 
 - stage: DelayDestroy
