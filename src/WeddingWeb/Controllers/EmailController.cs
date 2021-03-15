@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using WeddingWeb.DTO;
 using WeddingWeb.Services;
 
 namespace WeddingWeb.Controllers
@@ -23,12 +24,11 @@ namespace WeddingWeb.Controllers
 		/// Validate and send an email.
 		/// </summary>
 		/// <param name="email"></param>
-		/// <returns></returns>
 		[HttpPost]
 		[Route("")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> SendEmail(Email email)
+		public async Task<IActionResult> SendEmail(EmailDTO email)
 		{
 			var statusCode = await _emailService.SendEmail(email);
 			return StatusCode((int)statusCode);

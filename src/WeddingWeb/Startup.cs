@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Reflection;
 using WeddingWeb.Helpers.Extensions;
+using WeddingWeb.Helpers.Filters;
 
 namespace WeddingWeb
 {
@@ -33,15 +34,14 @@ namespace WeddingWeb
 			{
 				services.AddApplicationInsightsTelemetry();
 			}
-			
-			services.AddControllers();
-			// In production, the Angular files will be served from this directory
-			services.AddSpaStaticFiles(configuration =>
-			{
-				configuration.RootPath = "ClientApp/dist/wedding-web-app";
-			});
 
-			services.AddCustomSwagger();
+			services
+				.AddCustomRouting()
+				.AddCustomSwagger();
+
+			services.AddSpaStaticFiles(
+				configuration => { configuration.RootPath = "ClientApp/dist/wedding-web-app"; }
+				);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -124,6 +124,17 @@ namespace WeddingWeb
 					.GetName()
 					.Name}.xml");
 			});
+			return services;
+		}
+
+		public static IServiceCollection AddCustomRouting(this IServiceCollection services)
+		{
+			services.AddControllers(options =>
+				{
+					options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+				})
+				.AddControllersAsServices();
+
 			return services;
 		}
 	}
