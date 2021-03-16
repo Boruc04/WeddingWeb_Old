@@ -23,11 +23,11 @@ stages:
     
     variables:
       - name: projectPath
-        value: '**/src/**/Wedding.Web.csproj'
+        value: 'src/**/Wedding.Web.csproj'
       - name: buildConfiguration
         value: 'Release'
       - name: testProjectPath
-        value: '**/tests/**/*.csproj'
+        value: 'test/**/*.csproj'
 
     steps:
     - checkout: self
