@@ -63,7 +63,7 @@ stages:
     - task: DotNetCoreCLI@2
       inputs:
         command: 'test'
-        projects: '$(testProjectPath)'
+        projects: $(testProjectPath)
         arguments: '--configuration $(buildConfiguration) --no-build'
       displayName: run tests
     - task: DotNetCoreCLI@2
