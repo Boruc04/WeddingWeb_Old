@@ -10,7 +10,7 @@
 			get => _firstName;
 			init
 			{
-				if (string.IsNullOrEmpty(value))
+				if (string.IsNullOrWhiteSpace(value))
 					throw new DomainException("First name cannot be null or empty.");
 				_firstName = value;
 			}
@@ -21,7 +21,7 @@
 			get => _lastName;
 			init
 			{
-				if (string.IsNullOrEmpty(value))
+				if (string.IsNullOrWhiteSpace(value))
 					throw new DomainException("Last name cannot be null or empty.");
 				_lastName = value;
 			}

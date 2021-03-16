@@ -32,12 +32,12 @@ namespace WeddingWeb.Domain.Tests
 			Assert.Throws<DomainException>(() => new Guest { FirstName = firstName, LastName = lastName });
 		}
 
-		private static IEnumerable<(string, string)> InvalidInputs()
+		private static IEnumerable<object[]> InvalidInputs()
 		{
-			yield return ("valid", " ");
-			yield return (" ", "valid");
-			yield return ("valid", "");
-			yield return ("", "valid");
+			yield return new object[] { "valid", " " };
+			yield return new object[] { " ", "valid" };
+			yield return new object[] { "valid", "" };
+			yield return new object[] { "", "valid" };
 		}
 	}
 
