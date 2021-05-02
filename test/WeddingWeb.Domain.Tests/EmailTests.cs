@@ -7,7 +7,7 @@ namespace WeddingWeb.Domain.Tests
 	public class EmailTests
 	{
 		[Test]
-		public void when_createing_valid_email_expect_success()
+		public void when_creating_valid_email_expect_success()
 		{
 			var validEmail = MainEmailTests.CreateValidMainEmail();
 			var validGuestNumber = GuestNumberTests.CreateValidGuestNumber();
