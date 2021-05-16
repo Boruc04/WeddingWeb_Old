@@ -1,13 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Reflection;
-using WeddingWeb.Helpers.Extensions;
 using WeddingWeb.Helpers.Filters;
 
 namespace WeddingWeb
@@ -15,14 +13,11 @@ namespace WeddingWeb
 	public class Startup
 	{
 		private readonly IWebHostEnvironment _environment;
-		public IConfiguration Configuration { get; }
 
-		public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+		public Startup(IWebHostEnvironment environment)
 		{
 			_environment = environment;
-			Configuration = configuration;
 		}
-
 
 		/// <summary>
 		/// This method gets called by the runtime. Use this method to add services to the container.
@@ -72,14 +67,11 @@ namespace WeddingWeb
 				app.UseSpaStaticFiles();
 			}
 
-			app.UseRouting();
-
-			app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapControllerRoute(
-					name: "default",
-					pattern: "{controller}/{action=Index}/{id?}");
-			});
+			app.UseRouting()
+				.UseEndpoints(endpoints =>
+				{
+					endpoints.MapControllerRoute(name: "default", pattern: "{controller}/{action=Index}/{id?}");
+				});
 
 			app.UseSpa(spa =>
 			{

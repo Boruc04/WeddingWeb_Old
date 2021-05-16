@@ -26,12 +26,13 @@ namespace WeddingWeb.Controllers
 		/// <param name="email"></param>
 		[HttpPost]
 		[Route("")]
+		[MapToApiVersion("1.0")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> SendEmail(EmailDTO email)
 		{
-			var statusCode = await _emailService.SendEmail(email);
-			return StatusCode((int)statusCode);
+			await _emailService.SendEmail(email);
+			return Ok();
 		}
 	}
 

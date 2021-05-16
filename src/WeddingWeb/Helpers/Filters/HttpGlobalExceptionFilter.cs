@@ -1,14 +1,18 @@
-﻿using System;
-using System.Net;
-using Microsoft.ApplicationInsights;
+﻿using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Net;
 using WeddingWeb.Domain;
 using WeddingWeb.Helpers.ActionResults;
+using WeddingWeb.Helpers.Exceptions;
+using WeddingWeb.Helpers.Extensions;
 
 namespace WeddingWeb.Helpers.Filters
 {
@@ -47,13 +51,11 @@ namespace WeddingWeb.Helpers.Filters
 			{
 				Instance = context.HttpContext.Request.Path,
 				Status = StatusCodes.Status400BadRequest,
-				Detail = "Please refer to the errors property for additional details."
+				Detail = "Please refer to the errors property for additional details.",
+				Errors = {new KeyValuePair<string, string[]>("DomainValidations", new[] { context.Exception.Message })}
 			};
 
 			context.Result = new BadRequestObjectResult(problemDetails);
-			context.HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-
-			problemDetails.Errors.Add("DomainValidations", new[] { context.Exception.Message });
 		}
 
 		//private void OnValidationException(ExceptionContext context)
@@ -84,36 +86,36 @@ namespace WeddingWeb.Helpers.Filters
 		//	context.HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
 		//}
 
-		//private void OnExternalServiceException(ExceptionContext context)
-		//{
-		//	var externalServiceException = (ExternalServiceException)context.Exception;
+		private void OnExternalServiceException(ExceptionContext context)
+		{
+			var externalServiceException = (ExternalServiceException)context.Exception;
 
-		//	var json = new JsonErrorResponse { Messages = new[] { externalServiceException.Message } };
+			var json = new JsonErrorResponse { Messages = new[] { externalServiceException.Message } };
 
-		//	switch (externalServiceException.Response?.StatusCode)
-		//	{
-		//		case HttpStatusCode.Forbidden:
-		//			context.Result = new ForbidResult();
-		//			context.HttpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
-		//			break;
-		//		case HttpStatusCode.Unauthorized:
-		//			context.Result = new UnauthorizedResult();
-		//			context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
-		//			break;
-		//		default:
-		//			context.Result = new JsonResult(json);
-		//			context.HttpContext.Response.StatusCode = StatusCodes.Status502BadGateway;
-		//			break;
-		//	}
+			switch (externalServiceException.HttpStatusCode)
+			{
+				case HttpStatusCode.Forbidden:
+					context.Result = new ForbidResult();
+					context.HttpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
+					break;
+				case HttpStatusCode.Unauthorized:
+					context.Result = new UnauthorizedResult();
+					context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+					break;
+				default:
+					context.Result = new JsonResult(json);
+					context.HttpContext.Response.StatusCode = StatusCodes.Status502BadGateway;
+					break;
+			}
 
-		//	_telemetryClient.TrackException(context.Exception);
-		//}
+			_telemetryClient.TrackException(context.Exception);
+		}
 
 		private void OnDefaultException(ExceptionContext context)
 		{
-			var json = new JsonErrorResponse { Messages = new[] { "An error occured. Try again." } };
+			var json = new JsonErrorResponse { Messages = new[] { "An error occurred. Try again." } };
 
-			if (_environment.IsDevelopment())
+			if (_environment.IsDevelopment() || _environment.IsTest())
 			{
 				json.DeveloperMessage = context.Exception;
 			}
