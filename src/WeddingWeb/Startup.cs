@@ -1,21 +1,25 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Reflection;
 using WeddingWeb.Helpers.Filters;
+using WeddingWeb.Services;
 
 namespace WeddingWeb
 {
 	public class Startup
 	{
+		private readonly IConfiguration _configuration;
 		private readonly IWebHostEnvironment _environment;
 
-		public Startup(IWebHostEnvironment environment)
+		public Startup(IConfiguration configuration, IWebHostEnvironment environment)
 		{
+			_configuration = configuration;
 			_environment = environment;
 		}
 
@@ -25,18 +29,35 @@ namespace WeddingWeb
 		/// <param name="services"></param>
 		public void ConfigureServices(IServiceCollection services)
 		{
-			if (_environment.IsProduction())
+
+			services.AddApplicationInsightsTelemetry(_configuration["ApplicationInsights:InstrumentationKey"]);
+			services.AddCors(options =>
 			{
-				services.AddApplicationInsightsTelemetry();
-			}
+				options.AddPolicy("AllowOrigin", builder =>
+				{
+					builder 
+						.WithOrigins(_configuration["AllowCORSOrigins:Uri"])
+						.AllowAnyMethod()
+						.AllowAnyHeader();
+				});
+			});
 
 			services
 				.AddCustomRouting()
 				.AddCustomSwagger();
 
 			services.AddSpaStaticFiles(
-				configuration => { configuration.RootPath = "ClientApp/dist/wedding-web-app"; }
+				spaStaticFilesOptions => { spaStaticFilesOptions.RootPath = "ClientApp/dist/wedding-web-app"; }
 				);
+			if (_environment.IsProduction())
+			{
+				services.AddTransient<IEmailService, EmailService>();
+			}
+			else
+			{
+				services.AddTransient<IEmailService, MockEmailService>();
+			}
+			services.AddSingleton<VersionService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,9 +72,9 @@ namespace WeddingWeb
 				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 				app.UseHsts();
 			}
-
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
+			app.UseCors("AllowOrigin");
 
 			app.UseSwagger()
 				.UseSwaggerUI(c =>
@@ -73,13 +94,13 @@ namespace WeddingWeb
 					endpoints.MapControllerRoute(name: "default", pattern: "{controller}/{action=Index}/{id?}");
 				});
 
+
 			app.UseSpa(spa =>
 			{
 				// To learn more about options for serving an Angular SPA from ASP.NET Core,
 				// see https://go.microsoft.com/fwlink/?linkid=864501
 
 				spa.Options.SourcePath = "ClientApp";
-
 				if (env.IsDevelopment())
 				{
 					spa.UseAngularCliServer(npmScript: "start");

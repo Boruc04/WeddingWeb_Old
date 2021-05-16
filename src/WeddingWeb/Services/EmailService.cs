@@ -8,7 +8,7 @@ using WeddingWeb.Helpers.Exceptions;
 
 namespace WeddingWeb.Services
 {
-	public class EmailService
+	public class EmailService : IEmailService
 	{
 		private readonly SendGridClient _client;
 
@@ -26,6 +26,21 @@ namespace WeddingWeb.Services
 		}
 	}
 
+	/// <summary>
+	/// Service with mocked integration with Sendgrid api.
+	/// </summary>
+	public class MockEmailService : IEmailService
+	{
+		public MockEmailService() { }
+
+		public async Task SendEmail(EmailDTO emailDto)
+		{
+			var email = EmailDTO.MapFromDto(emailDto);
+			email.CreateSendGridMessage();
+			await Task.CompletedTask;
+		}
+	}
+
 	public static class SendGridResponseExtensions
 	{
 		public static async Task Validate(this Response response)
@@ -33,7 +48,7 @@ namespace WeddingWeb.Services
 			if (!response.IsSuccessStatusCode)
 			{
 				var requestContent = await response.Body.ReadAsStringAsync();
-				
+
 				throw response.StatusCode switch
 				{
 					HttpStatusCode.BadRequest => new DomainException(requestContent),

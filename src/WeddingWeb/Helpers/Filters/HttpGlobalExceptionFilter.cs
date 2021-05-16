@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using WeddingWeb.Domain;
@@ -52,7 +51,7 @@ namespace WeddingWeb.Helpers.Filters
 				Instance = context.HttpContext.Request.Path,
 				Status = StatusCodes.Status400BadRequest,
 				Detail = "Please refer to the errors property for additional details.",
-				Errors = {new KeyValuePair<string, string[]>("DomainValidations", new[] { context.Exception.Message })}
+				Errors = { new KeyValuePair<string, string[]>("DomainValidations", new[] { context.Exception.Message }) }
 			};
 
 			context.Result = new BadRequestObjectResult(problemDetails);

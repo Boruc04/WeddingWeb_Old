@@ -13,11 +13,11 @@ namespace WeddingWeb.Controllers
 	[Produces("application/json")]
 	public class EmailController : ControllerBase
 	{
-		private readonly EmailService _emailService;
+		private readonly IEmailService _emailService;
 
-		public EmailController(IConfiguration configuration)
+		public EmailController(IEmailService emailService)
 		{
-			_emailService = new EmailService(configuration);
+			_emailService = emailService;
 		}
 
 		/// <summary>
