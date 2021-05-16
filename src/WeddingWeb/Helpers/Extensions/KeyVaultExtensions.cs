@@ -18,6 +18,8 @@ namespace WeddingWeb.Helpers.Extensions
 					var builtConfig = config.Build();
 					var credentialOptions = new DefaultAzureCredentialOptions
 					{
+						// base on this issue https://github.com/Azure/azure-sdk-for-net/issues/17052 adding bellow line.
+						ExcludeSharedTokenCacheCredential = true,
 						ManagedIdentityClientId = builtConfig["UserAssignedManagedIdentityClientId"],
 						VisualStudioTenantId = builtConfig["KeyVault:VisualStudioTenantId"]
 					};
