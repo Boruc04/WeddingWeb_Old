@@ -18,7 +18,7 @@ stages:
     
     variables:
       - name: projectPath
-        value: 'src/**/Wedding.Web.csproj'
+        value: 'src/**/WeddingWeb.csproj'
       - name: buildConfiguration
         value: 'Release'
       - name: testProjectPath
