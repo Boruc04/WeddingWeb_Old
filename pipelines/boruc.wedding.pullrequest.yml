@@ -59,14 +59,14 @@ stages:
       inputs:
         command: 'test'
         projects: '$(testProjectPath)'
-        arguments: '--configuration Debug --no-build'
+        arguments: '--no-build'
         testRunTitle: 'Wedding Web Tests'
       displayName: run tests
     - task: DotNetCoreCLI@2
       inputs:
         command: publish
         publishWebProjects: True
-        arguments: '--configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)'
+        arguments: '--no-build --output $(Build.ArtifactStagingDirectory)'
         zipAfterPublish: True
       displayName: Create build artifact
     - task: PublishBuildArtifacts@1
