@@ -22,7 +22,7 @@ stages:
       - name: buildConfiguration
         value: 'Release'
       - name: testProjectPath
-        value: 'test/**/*.csproj'
+        value: 'test/**/*Tests.csproj'
 
     steps:
     - checkout: self
